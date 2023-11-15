@@ -4,23 +4,50 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
-    Grid grid;
+    Grid gridCPU;
+    GridGPU gridGPU;
     float timer = 0;
     float timerMAX = 1;
     [SerializeField] int size;
+    [SerializeField] bool useGPU;
+
     void Start()
     {
-        grid = new Grid(size);
+        if(useGPU)
+        {
+            gridGPU = new GridGPU(size);
+        }
+        else
+        {
+            gridCPU = new Grid(size);
+        }
+        
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         timer += Time.deltaTime;
         if (timer >= timerMAX)
         {
             timer = 0;
-            grid.Update(Time.deltaTime);
+            if (useGPU)
+            {
+                gridGPU.Update();
+            }
+            else
+            {
+                gridCPU.Update(Time.deltaTime);
+            }
         }
     }
+
+    private void OnDestroy()
+    {
+        if(useGPU)
+        {
+            gridGPU.computeBuffer.Dispose();
+        }
+    }
+
 }

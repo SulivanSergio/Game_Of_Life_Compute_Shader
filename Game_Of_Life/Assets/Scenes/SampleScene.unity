@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 10
+  useGPU: 1
 --- !u!4 &618686304
 Transform:
   m_ObjectHideFlags: 0

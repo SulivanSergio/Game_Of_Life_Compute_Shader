@@ -11,28 +11,16 @@ public class Grid
         this.size = size;
         cells = new Cell[size, size];
 
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                cells[i, j] = new Cell(i, j,size);
-            }
-        }
-        cells[1, 3].auxDead = false;
-        cells[2, 4].auxDead = false;
-        cells[2, 5].auxDead = false;
-        cells[3, 4].auxDead = false;
-        cells[4, 4].auxDead = false;
-        cells[3, 6].auxDead = false;
-        cells[3, 5].auxDead = false;
-        cells[3, 4].auxDead = false;
-        cells[3, 5].auxDead = false;
-        cells[4, 4].auxDead = false;
-        cells[5, 4].auxDead = false;
-        cells[4, 6].auxDead = false;
-        cells[4, 5].auxDead = false;
-        cells[1, 5].auxDead = false;
-        cells[0, 4].auxDead = false;
+        CreateGrid();
+
+        cells[6, 5].auxDead = false;
+        cells[6, 4].auxDead = false;
+        cells[7, 5].auxDead = false;
+        cells[8, 4].auxDead = false;
+        cells[8, 3].auxDead = false;
+        cells[7, 3].auxDead = false;
+        
+
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
@@ -52,6 +40,18 @@ public class Grid
             }
         }
     }
+    public void CreateGrid()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                cells[i, j] = new Cell(i, j, size);
+                cells[i, j].CreateGameObject();
+            }
+        }
+    }
+
     public void Checks()
     {
         int cont = 0;
@@ -59,7 +59,7 @@ public class Grid
         {
             for (int j = 0; j < size; j++)
             {
-                if (cells[i, j].vizinhos[0] == true)
+                if (cells[i, j].nextDoor[0] == true)
                 {
                     //esquerda
                     if (!cells[i - 1, j].dead)
@@ -67,7 +67,7 @@ public class Grid
                         cont++;
                     }
                 }
-                if (cells[i, j].vizinhos[4] == true)
+                if (cells[i, j].nextDoor[4] == true)
                 {
                     //direita
                     if (!cells[i + 1, j].dead)
@@ -76,7 +76,7 @@ public class Grid
 
                     }
                 }
-                if (cells[i, j].vizinhos[2] == true)
+                if (cells[i, j].nextDoor[2] == true)
                 {
                     //cima
                     if (!cells[i, j + 1].dead)
@@ -85,7 +85,7 @@ public class Grid
 
                     }
                 }
-                if (cells[i, j].vizinhos[6] == true)
+                if (cells[i, j].nextDoor[6] == true)
                 {
                     //baixo
                     if (!cells[i, j - 1].dead)
@@ -95,8 +95,8 @@ public class Grid
                     }
                 }
                 //diagonais
-                
-                if (cells[i, j].vizinhos[1] == true)
+
+                if (cells[i, j].nextDoor[1] == true)
                 {
                     //esquerda - cima
                     if (!cells[i - 1, j + 1].dead)
@@ -104,16 +104,16 @@ public class Grid
                         cont++;
                     }
                 }
-                if (cells[i, j].vizinhos[3] == true)
+                if (cells[i, j].nextDoor[3] == true)
                 {
                     //direita - cima
-                    if (!cells[i + 1, j +1 ].dead)
+                    if (!cells[i + 1, j + 1].dead)
                     {
                         cont++;
 
                     }
                 }
-                if (cells[i, j].vizinhos[5] == true)
+                if (cells[i, j].nextDoor[5] == true)
                 {
                     //direita - baixo
                     if (!cells[i + 1, j - 1].dead)
@@ -122,7 +122,7 @@ public class Grid
 
                     }
                 }
-                if (cells[i, j].vizinhos[7] == true)
+                if (cells[i, j].nextDoor[7] == true)
                 {
                     //esquerda - baixo
                     if (!cells[i - 1, j - 1].dead)
@@ -135,7 +135,7 @@ public class Grid
                 //----------------
                 if (cells[i, j].dead)
                 {
-                    if (cont > 2)
+                    if (cont == 3)
                     {
                         cells[i, j].auxDead = false;
                     }

@@ -1,0 +1,73 @@
+
+#pragma kernel CSMain
+
+struct Cell {
+    int x;
+    int z;
+    int dead;
+    int auxDead;
+    int size;
+    float4 nextDoor1;
+    float4 nextDoor2;
+};
+
+RWStructuredBuffer<Cell> cells;
+
+
+[numthreads(10,10,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    
+    Cell cell = cells[id.x, id.y];
+    int cont = 0;
+    //esquerda 0
+    cont += cell.nextDoor1.x == 1 ? (cells[id.x - 1, id.y].dead == 0 ? 1 : 0) : 0;
+
+    //direita 4
+    cont += cell.nextDoor1.y == 1 ? (cells[id.x + 1, id.y].dead == 0 ? 1 : 0) : 0;
+    //cima 2
+    cont += cell.nextDoor1.z == 1 ? (cells[id.x, id.y + 1].dead == 0 ? 1 : 0) : 0;
+    //baixo 6
+    cont += cell.nextDoor1.w == 1 ? (cells[id.x, id.y - 1].dead == 0 ? 1 : 0) : 0;
+
+    //DIAGONAIS
+    //esquerda - cima 1
+    cont += cell.nextDoor2.x == 1 ? (cells[id.x - 1, id.y + 1].dead == 0 ? 1 : 0) : 0;
+    //direita - cima 3
+    cont += cell.nextDoor2.y == 1 ? (cells[id.x + 1, id.y + 1].dead == 0 ? 1 : 0) : 0;
+    //direita - baixo 5
+    cont += cell.nextDoor2.z == 1 ? (cells[id.x + 1, id.y - 1].dead == 0 ? 1 : 0) : 0;
+    //esquerda - baixo 7
+    cont += cell.nextDoor2.w == 1 ? (cells[id.x - 1, id.y - 1].dead == 0 ? 1 : 0) : 0;
+
+    cell.size = cont;
+    if (cell.dead == 1)
+    {
+        if (cont == 3)
+        {
+            cell.auxDead = 0;
+        }
+
+    }
+    else
+    {
+        if (cont < 2)
+        {
+            cell.auxDead = 1;
+        }
+        if (cont > 3)
+        {
+            cell.auxDead = 1;
+        }
+        if (cont == 2 || cont == 3)
+        {
+            cell.auxDead = 0;
+        }
+
+    }
+    cont = 0;
+    cells[id.x, id.y] = cell;
+    
+    
+    
+}
