@@ -19,6 +19,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
 {
     
     Cell cell = cells[id.x, id.y];
+    
     int cont = 0;
     //esquerda 0
     cont += cell.nextDoor1.x == 1 ? (cells[id.x - 1, id.y].dead == 0 ? 1 : 0) : 0;
@@ -40,7 +41,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     //esquerda - baixo 7
     cont += cell.nextDoor2.w == 1 ? (cells[id.x - 1, id.y - 1].dead == 0 ? 1 : 0) : 0;
 
-    cell.size = cont;
+    cell.size = cell.nextDoor1.x + cell.nextDoor1.y + cell.nextDoor1.z + cell.nextDoor1.w + cell.nextDoor2.x + cell.nextDoor2.y + cell.nextDoor2.z + cell.nextDoor2.w;
     if (cell.dead == 1)
     {
         if (cont == 3)
@@ -65,9 +66,9 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         }
 
     }
-    cont = 0;
-    cells[id.x, id.y] = cell;
     
+    cells[id.x, id.y] = cell;
+    cont = 0;
     
     
 }

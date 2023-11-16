@@ -30,33 +30,36 @@ public class GridGPU
         CreateGrid();
         
 
-        computeShader = Resources.Load<ComputeShader>("ComputeShader");
+       
+
+        cells[0, 0].auxDead = 0;
+
+        cells[4, 3].auxDead = 0;
+        cells[4, 2].auxDead = 0;
+        cells[5, 3].auxDead = 0;
+        cells[6, 2].auxDead = 0;
+        cells[6, 1].auxDead = 0;
+        cells[5, 1].auxDead = 0;
         
+        UpdateColor();
+
+        computeShader = Resources.Load<ComputeShader>("ComputeShader");
+
 
         int totalsize = sizeof(int) * 5 + sizeof(float) * 8;
 
-        
-        computeBuffer = new ComputeBuffer(size*size, totalsize);
+
+        computeBuffer = new ComputeBuffer(size * size, totalsize);
         computeBuffer.SetData(cells);
-        computeShader.SetBuffer(0, "cells", computeBuffer);
-
-        cells[6, 5].auxDead = 0;
-        cells[6, 4].auxDead = 0;
-        cells[7, 5].auxDead = 0;
-        cells[8, 4].auxDead = 0;
-        cells[8, 3].auxDead = 0;
-        cells[7, 3].auxDead = 0;
-
-        UpdateColor();
-
-
+        computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "cells", computeBuffer);
+        
     }
 
     public void Update()
     {
         
         computeBuffer.SetData(cells);
-        computeShader.Dispatch(0, Mathf.CeilToInt(size*size / 10), Mathf.CeilToInt(size*size / 10), 1);
+        computeShader.Dispatch(computeShader.FindKernel("CSMain"), Mathf.CeilToInt(size*size / 10), Mathf.CeilToInt(size*size / 10), 1);
         computeBuffer.GetData(cells);
         UpdateColor();
 
@@ -76,7 +79,7 @@ public class GridGPU
                 cells[i, j].dead = 1;
                 cells[i, j].auxDead = 1;
                 cells[i, j].size = size;
-                UpdateNextDoor(size);
+                UpdateNextDoor(cells[i, j]);
                 CreateGameObject(i,j);
             }
         }
@@ -92,55 +95,48 @@ public class GridGPU
         cellGO[x, z].transform.position = new Vector3(x, 0, z);
     }
 
-    public void UpdateNextDoor(int size)
+    private void UpdateNextDoor(Cell cell)
     {
+ 
+        cell.nextDoor1.x = 1;
+        cell.nextDoor1.y = 1;
+        cell.nextDoor1.z = 1;
+        cell.nextDoor1.w = 1;
 
-        for (int i = 0; i < size; i++)
+        cell.nextDoor2.x = 1;
+        cell.nextDoor2.y = 1;
+        cell.nextDoor2.z = 1;
+        cell.nextDoor2.w = 1;
+
+        if (cell.x < 1)
         {
-            for (int j = 0; j < size; j++)
-            {
-                
-                cells[i, j].nextDoor1.x = 1;
-                cells[i, j].nextDoor1.y = 1;
-                cells[i, j].nextDoor1.z = 1;
-                cells[i, j].nextDoor1.w = 1;
-
-                cells[i, j].nextDoor2.x = 1;
-                cells[i, j].nextDoor2.y = 1;
-                cells[i, j].nextDoor2.z = 1;
-                cells[i, j].nextDoor2.w = 1;
-
-                if (i < 1)
-                {
-                    cells[i,j].nextDoor1.x = 0;
-                    cells[i, j].nextDoor2.x = 0;
-                    cells[i, j].nextDoor2.w = 0;
-                }
-                if (i > size - 2)
-                {
-                    cells[i, j].nextDoor2.y = 0;
-                    cells[i, j].nextDoor1.z = 0;
-                    cells[i, j].nextDoor2.z = 0;
-
-                }
-                //Z
-                if (j > size - 2)
-                {
-                    cells[i, j].nextDoor2.x = 0;
-                    cells[i, j].nextDoor1.y = 0;
-                    cells[i, j].nextDoor2.y = 0;
-
-                }
-                if (j < 1)
-                {
-                    
-                    cells[i, j].nextDoor2.z = 0;
-                    cells[i, j].nextDoor1.w = 0;
-                    cells[i, j].nextDoor2.w = 0;
-                }
-
-            }
+            cell.nextDoor1.x = 0;
+            cell.nextDoor2.x = 0;
+            cell.nextDoor2.w = 0;
         }
+        if (cell.x > size - 2)
+        {
+            cell.nextDoor2.y = 0;
+            cell.nextDoor1.z = 0;
+            cell.nextDoor2.z = 0;
+
+        }
+        //Z
+        if (cell.z > size - 2)
+        {
+            cell.nextDoor2.x = 0;
+            cell.nextDoor1.y = 0;
+            cell.nextDoor2.y = 0;
+
+        }
+        if (cell.z < 1)
+        {
+                    
+            cell.nextDoor2.z = 0;
+            cell.nextDoor1.w = 0;
+            cell.nextDoor2.w = 0;
+        }
+        
     }
 
     private void UpdateColor()
@@ -149,10 +145,10 @@ public class GridGPU
         {
             for (int j = 0; j < size; j++)
             {
-                //if(cells[i, j].dead != cells[i, j].auxDead)
-                //{
+                if(cells[i, j].dead != cells[i, j].auxDead)
+                {
                     Debug.Log("id: "+ i+"_"+ j+" AuxDead: " + cells[i, j].auxDead + " Dead: " + cells[i, j].dead + "CONT: "+ cells[i, j].size);
-               //}
+               }
                 
                 cells[i, j].dead = cells[i, j].auxDead;
                 
