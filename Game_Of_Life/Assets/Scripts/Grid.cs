@@ -13,12 +13,21 @@ public class Grid
 
         CreateGrid();
 
-        cells[6, 5].auxDead = false;
-        cells[6, 4].auxDead = false;
-        cells[7, 5].auxDead = false;
-        cells[8, 4].auxDead = false;
-        cells[8, 3].auxDead = false;
-        cells[7, 3].auxDead = false;
+        for(int i = 0; i< size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                if(i == j)
+                {
+                    cells[i, j].auxDead = false;
+                }
+                if (j == (size - 1 - i))
+                {
+                    cells[i, j].auxDead = false;
+                }
+            }
+        }
+        
         
 
         for (int i = 0; i < size; i++)
@@ -57,8 +66,10 @@ public class Grid
         int cont = 0;
         for (int i = 0; i < size; i++)
         {
+            
             for (int j = 0; j < size; j++)
             {
+                
                 if (cells[i, j].nextDoor[0] == true)
                 {
                     //esquerda

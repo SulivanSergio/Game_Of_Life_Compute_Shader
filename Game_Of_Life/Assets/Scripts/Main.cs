@@ -7,9 +7,11 @@ public class Main : MonoBehaviour
     Grid gridCPU;
     GridGPU gridGPU;
     float timer = 0;
-    float timerMAX = 1;
+    float timerMAX = 0.5f;
     [SerializeField] int size;
     [SerializeField] bool useGPU;
+
+   
 
     void Start()
     {
@@ -33,11 +35,28 @@ public class Main : MonoBehaviour
             timer = 0;
             if (useGPU)
             {
+                float speedUp = 0;
+                float tempoInicial = Time.realtimeSinceStartup;
+
+                
                 gridGPU.Update();
+
+                float tempoFinal = Time.realtimeSinceStartup;
+                speedUp = 1.0f / (tempoFinal - tempoInicial);
+
+                Debug.Log("SpeedUp: " + speedUp);
             }
             else
             {
+                float speedUp = 0;
+                float tempoInicial = Time.realtimeSinceStartup;
+
                 gridCPU.Update(Time.deltaTime);
+
+                float tempoFinal = Time.realtimeSinceStartup;
+                speedUp = 1.0f/ (tempoFinal - tempoInicial);
+
+                Debug.Log("SpeedUp: " + speedUp);
             }
         }
     }
