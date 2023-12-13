@@ -44,7 +44,7 @@ public class Main : MonoBehaviour
                 float tempoFinal = Time.realtimeSinceStartup;
                 speedUp = 1.0f / (tempoFinal - tempoInicial);
 
-                Debug.Log("SpeedUp: " + speedUp);
+                //Debug.Log("SpeedUp: " + speedUp);
             }
             else
             {

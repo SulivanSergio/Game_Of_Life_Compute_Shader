@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1451753163753c548bbc34473fbabbeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 60
-  useGPU: 0
+  size: 10
+  useGPU: 1
 --- !u!4 &618686304
 Transform:
   m_ObjectHideFlags: 0

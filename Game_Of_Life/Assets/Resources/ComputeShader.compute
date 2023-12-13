@@ -14,34 +14,34 @@ struct Cell {
 RWStructuredBuffer<Cell> cells;
 
 
-[numthreads(10,10,1)]
+[numthreads(10,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     
-    Cell cell = cells[id.x, id.y];
+    Cell cell = cells[id.x];
     
     int cont = 0;
     //esquerda 0
-    cont += cell.nextDoor1.x == 1 ? (cells[id.x - 1, id.y].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor1.x == 1 ? (cells[cell.size - id.x].dead == 0 ? 1 : 0) : 0;
 
     //direita 4
-    cont += cell.nextDoor1.y == 1 ? (cells[id.x + 1, id.y].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor1.y == 1 ? (cells[cell.size + id.x].dead == 0 ? 1 : 0) : 0;
     //cima 2
-    cont += cell.nextDoor1.z == 1 ? (cells[id.x, id.y + 1].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor1.z == 1 ? (cells[id.x + 1].dead == 0 ? 1 : 0) : 0;
     //baixo 6
-    cont += cell.nextDoor1.w == 1 ? (cells[id.x, id.y - 1].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor1.w == 1 ? (cells[id.x - 1].dead == 0 ? 1 : 0) : 0;
 
     //DIAGONAIS
     //esquerda - cima 1
-    cont += cell.nextDoor2.x == 1 ? (cells[id.x - 1, id.y + 1].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor2.x == 1 ? (cells[cell.size - id.x + 1].dead == 0 ? 1 : 0) : 0;
     //direita - cima 3
-    cont += cell.nextDoor2.y == 1 ? (cells[id.x + 1, id.y + 1].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor2.y == 1 ? (cells[cell.size + id.x - 1].dead == 0 ? 1 : 0) : 0;
     //direita - baixo 5
-    cont += cell.nextDoor2.z == 1 ? (cells[id.x + 1, id.y - 1].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor2.z == 1 ? (cells[cell.size + id.x + 1].dead == 0 ? 1 : 0) : 0;
     //esquerda - baixo 7
-    cont += cell.nextDoor2.w == 1 ? (cells[id.x - 1, id.y - 1].dead == 0 ? 1 : 0) : 0;
+    cont += cell.nextDoor2.w == 1 ? (cells[cell.size - id.x - 1].dead == 0 ? 1 : 0) : 0;
 
-    cell.size = cell.nextDoor1.x + cell.nextDoor1.y + cell.nextDoor1.z + cell.nextDoor1.w + cell.nextDoor2.x + cell.nextDoor2.y + cell.nextDoor2.z + cell.nextDoor2.w;
+    cell.size = cont;
     if (cell.dead == 1)
     {
         if (cont == 3)

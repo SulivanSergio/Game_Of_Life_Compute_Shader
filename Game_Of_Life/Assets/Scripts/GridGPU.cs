@@ -19,7 +19,7 @@ public class GridGPU
     public ComputeBuffer computeBuffer;
     
     Cell[,] cells;
-    
+    Cell[] cellsBuffer;
 
     GameObject[,] cellGO;
     int size;
@@ -59,7 +59,7 @@ public class GridGPU
 
 
         computeBuffer = new ComputeBuffer(size * size, totalsize);
-        computeBuffer.SetData(cells);
+        computeBuffer.SetData(cellsBuffer);
         computeShader.SetBuffer(computeShader.FindKernel("CSMain"), "cells", computeBuffer);
         
     }
@@ -68,14 +68,16 @@ public class GridGPU
     {
         
         computeBuffer.SetData(cells);
-        computeShader.Dispatch(computeShader.FindKernel("CSMain"), Mathf.CeilToInt(size*size/10), Mathf.CeilToInt(size * size / 10), 1);
+        computeShader.Dispatch(computeShader.FindKernel("CSMain"), Mathf.CeilToInt(size*size/10),1, 1);
         computeBuffer.GetData(cells);
+        UpdateCell();
         UpdateColor();
 
     }
 
     public void CreateGrid()
     {
+        cellsBuffer = new Cell[size*size];
         cells = new Cell[size,size];
         cellGO = new GameObject[size, size];
         for (int i = 0; i < size; i++)
@@ -92,6 +94,11 @@ public class GridGPU
                 CreateGameObject(i,j);
             }
         }
+        for (int i = 0; i < size*size; i++)
+        {
+             cellsBuffer[i] = cells[i / size, i % size];
+        }
+
     }
     private void CreateGameObject(int x,int z)
     {
@@ -154,11 +161,11 @@ public class GridGPU
         {
             for (int j = 0; j < size; j++)
             {
-                //if(cells[i, j].dead != cells[i, j].auxDead)
+                //if (cells[i, j].dead != cells[i, j].auxDead)
                 //{
-                //    Debug.Log("id: "+ i+"_"+ j+" AuxDead: " + cells[i, j].auxDead + " Dead: " + cells[i, j].dead + "CONT: "+ cells[i, j].size);
+                    Debug.Log("id: " + i + "_" + j + " AuxDead: " + cells[i, j].auxDead + " Dead: " + cells[i, j].dead + "CONT: " + cells[i, j].size);
                 //}
-                
+
                 cells[i, j].dead = cells[i, j].auxDead;
                 
                 if (cells[i, j].dead == 1)
@@ -175,6 +182,16 @@ public class GridGPU
         
     }
     
+    private void UpdateCell()
+    {
+        for (int i = 0; i < size * size; i++)
+        {
+
+            cells[i / size, i % size] = cellsBuffer[i];
+
+            
+        }
+    }
    
 
 }
