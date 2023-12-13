@@ -28,28 +28,19 @@ public class GridGPU
     {
         this.size = size;
         CreateGrid();
-
-
-
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                if (i == j)
-                {
-                    cells[i, j].auxDead = 0;
-                }
-                if (j == (size - 1 - i))
-                {
-                    cells[i, j].auxDead = 0;
-                }
-            }
-        }
-
         
 
-        
+       
 
+        cells[0, 0].auxDead = 0;
+
+        cells[4, 3].auxDead = 0;
+        cells[4, 2].auxDead = 0;
+        cells[5, 3].auxDead = 0;
+        cells[6, 2].auxDead = 0;
+        cells[6, 1].auxDead = 0;
+        cells[5, 1].auxDead = 0;
+        
         UpdateColor();
 
         computeShader = Resources.Load<ComputeShader>("ComputeShader");
@@ -68,7 +59,11 @@ public class GridGPU
     {
         
         computeBuffer.SetData(cells);
+<<<<<<< HEAD
         computeShader.Dispatch(computeShader.FindKernel("CSMain"), Mathf.CeilToInt(size*size/10),1, 1);
+=======
+        computeShader.Dispatch(computeShader.FindKernel("CSMain"), Mathf.CeilToInt(size*size / 10), Mathf.CeilToInt(size*size / 10), 1);
+>>>>>>> parent of 457de10 (SpeedUp adicionado)
         computeBuffer.GetData(cells);
         UpdateCell();
         UpdateColor();
@@ -161,11 +156,19 @@ public class GridGPU
         {
             for (int j = 0; j < size; j++)
             {
+<<<<<<< HEAD
                 //if (cells[i, j].dead != cells[i, j].auxDead)
                 //{
                     Debug.Log("id: " + i + "_" + j + " AuxDead: " + cells[i, j].auxDead + " Dead: " + cells[i, j].dead + "CONT: " + cells[i, j].size);
                 //}
 
+=======
+                if(cells[i, j].dead != cells[i, j].auxDead)
+                {
+                    Debug.Log("id: "+ i+"_"+ j+" AuxDead: " + cells[i, j].auxDead + " Dead: " + cells[i, j].dead + "CONT: "+ cells[i, j].size);
+               }
+                
+>>>>>>> parent of 457de10 (SpeedUp adicionado)
                 cells[i, j].dead = cells[i, j].auxDead;
                 
                 if (cells[i, j].dead == 1)
